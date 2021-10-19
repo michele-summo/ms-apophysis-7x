@@ -1202,6 +1202,9 @@ begin
   if VarPossible then begin
     repeat
       rv := var_distrib[random(Length(var_distrib))];
+      if (0 > rv) or (rv >= Length(Variations)) then begin
+          rv := 0
+      end;
     until Variations[rv];
   end else begin
     rv := 0;
@@ -1258,6 +1261,9 @@ begin
   if VarPossible then begin
     repeat
       rv := var_distrib[random(Length(var_distrib))];
+      if (0 > rv) or (rv >= Length(Variations)) then begin
+          rv := 0
+      end;
     until Variations[rv];
   end else begin
     rv := 0;

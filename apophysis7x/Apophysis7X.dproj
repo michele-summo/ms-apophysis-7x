@@ -90,8 +90,8 @@
         <SanitizedProjectName>Apophysis7X</SanitizedProjectName>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Win32)'!=''">
-        <DCC_ExeOutput>..\..\Out\x86\</DCC_ExeOutput>
-        <DCC_DcuOutput>..\..\Out\x86\dcu\</DCC_DcuOutput>
+        <DCC_ExeOutput>Out\x86\</DCC_ExeOutput>
+        <DCC_DcuOutput>Out\x86\dcu\</DCC_DcuOutput>
         <DCC_Namespace>Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;Bde;$(DCC_Namespace)</DCC_Namespace>
         <UWP_DelphiLogo44>$(BDS)\bin\Artwork\Windows\UWP\delphi_UwpDefault_44.png</UWP_DelphiLogo44>
         <UWP_DelphiLogo150>$(BDS)\bin\Artwork\Windows\UWP\delphi_UwpDefault_150.png</UWP_DelphiLogo150>
@@ -105,8 +105,8 @@ $(PostBuildEvent)]]></PostBuildEvent>
         <VerInfo_Build>0</VerInfo_Build>
         <VerInfo_MajorVer>1</VerInfo_MajorVer>
         <VerInfo_Release>0</VerInfo_Release>
-        <DCC_ExeOutput>..\..\Out\x64\</DCC_ExeOutput>
-        <DCC_DcuOutput>..\..\Out\x64\dcu\</DCC_DcuOutput>
+        <DCC_ExeOutput>Out\x64\</DCC_ExeOutput>
+        <DCC_DcuOutput>Out\x64\dcu\</DCC_DcuOutput>
         <DCC_Define>Apo7X64;$(DCC_Define)</DCC_Define>
         <DCC_Namespace>Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;$(DCC_Namespace)</DCC_Namespace>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
@@ -123,6 +123,8 @@ $(PostBuildEvent)]]></PostBuildEvent>
         <BT_BuildType>Debug</BT_BuildType>
         <DCC_AssertionsAtRuntime>false</DCC_AssertionsAtRuntime>
         <DCC_ImportedDataReferences>false</DCC_ImportedDataReferences>
+        <DCC_DcuOutput>Out\x86\dcu\</DCC_DcuOutput>
+        <DCC_ExeOutput>Out\x86\</DCC_ExeOutput>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1_Win64)'!=''">
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
@@ -130,6 +132,8 @@ $(PostBuildEvent)]]></PostBuildEvent>
         <VerInfo_Release>0</VerInfo_Release>
         <VerInfo_Build>0</VerInfo_Build>
         <BT_BuildType>Debug</BT_BuildType>
+        <DCC_DcuOutput>Out\x64\dcu\</DCC_DcuOutput>
+        <DCC_ExeOutput>Out\x64\</DCC_ExeOutput>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2)'!=''">
         <DCC_Define>DEBUG;$(DCC_Define)</DCC_Define>
@@ -144,11 +148,14 @@ $(PostBuildEvent)]]></PostBuildEvent>
         <VerInfo_Keys>CompanyName=;FileVersion=2.1.15.1590;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductVersion=1.0.0.0;ProgramID=com.embarcadero.$(MSBuildProjectName);FileDescription=$(MSBuildProjectName);ProductName=$(MSBuildProjectName)</VerInfo_Keys>
         <DCC_DebugInfoInExe>true</DCC_DebugInfoInExe>
         <DCC_DebugDCUs>true</DCC_DebugDCUs>
-        <DCC_IOChecking>true</DCC_IOChecking>
-        <DCC_IntegerOverflowCheck>true</DCC_IntegerOverflowCheck>
-        <DCC_RangeChecking>true</DCC_RangeChecking>
         <DCC_RemoteDebug>true</DCC_RemoteDebug>
         <DCC_MinimumEnumSize>2</DCC_MinimumEnumSize>
+        <DCC_DcuOutput>Out\x86\dcu\</DCC_DcuOutput>
+        <DCC_ExeOutput>Out\x86\</DCC_ExeOutput>
+        <BT_BuildType>Debug</BT_BuildType>
+        <DCC_IntegerOverflowCheck>true</DCC_IntegerOverflowCheck>
+        <DCC_IOChecking>true</DCC_IOChecking>
+        <DCC_RangeChecking>true</DCC_RangeChecking>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2_Win64)'!=''">
         <VerInfo_MajorVer>1</VerInfo_MajorVer>
@@ -159,6 +166,9 @@ $(PostBuildEvent)]]></PostBuildEvent>
         <DCC_DebugInfoInExe>true</DCC_DebugInfoInExe>
         <DCC_IMPLICIT_STRING_CAST>false</DCC_IMPLICIT_STRING_CAST>
         <DCC_RemoteDebug>true</DCC_RemoteDebug>
+        <DCC_DcuOutput>Out\x64\dcu\</DCC_DcuOutput>
+        <DCC_ExeOutput>Out\x64\</DCC_ExeOutput>
+        <BT_BuildType>Debug</BT_BuildType>
     </PropertyGroup>
     <ItemGroup>
         <DelphiCompile Include="$(MainSource)">
@@ -366,19 +376,19 @@ $(PostBuildEvent)]]></PostBuildEvent>
     <Import Condition="Exists('$(BDS)\Bin\CodeGear.Delphi.Targets')" Project="$(BDS)\Bin\CodeGear.Delphi.Targets"/>
     <Import Condition="Exists('$(APPDATA)\Embarcadero\$(BDSAPPDATABASEDIR)\$(PRODUCTVERSION)\UserTools.proj')" Project="$(APPDATA)\Embarcadero\$(BDSAPPDATABASEDIR)\$(PRODUCTVERSION)\UserTools.proj"/>
     <PropertyGroup Condition="'$(Config)'=='Release' And '$(Platform)'=='Win64'">
-        <PreBuildEvent>DEL /Q &quot;$(OUTPUTDIR)*$(OUTPUTEXT)&quot;</PreBuildEvent>
+        <PreBuildEvent>DEL /Q &quot;$(OUTPUTDIR)*$(OUTPUTEXT)&quot;</PreBuildEvent>
         <PreBuildEventIgnoreExitCode>False</PreBuildEventIgnoreExitCode>
         <PreLinkEvent/>
         <PreLinkEventIgnoreExitCode>False</PreLinkEventIgnoreExitCode>
-        <PostBuildEvent>COPY /Y &quot;$(OUTPUTDIR)$(OUTPUTFILENAME)&quot; &quot;$(OUTPUTDIR)Apophysis7X64$(OUTPUTEXT)&quot;&amp;&amp;DEL /Q &quot;$(OUTPUTDIR)$(OUTPUTFILENAME)&quot;</PostBuildEvent>
+        <PostBuildEvent>COPY /Y &quot;$(OUTPUTDIR)$(OUTPUTFILENAME)&quot; &quot;$(OUTPUTDIR)Apophysis7X64$(OUTPUTEXT)&quot;&amp;&amp;DEL /Q &quot;$(OUTPUTDIR)$(OUTPUTFILENAME)&quot;</PostBuildEvent>
         <PostBuildEventIgnoreExitCode>False</PostBuildEventIgnoreExitCode>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Config)'=='Debug' And '$(Platform)'=='Win64'">
-        <PreBuildEvent>DEL /Q &quot;$(OUTPUTDIR)*$(OUTPUTEXT)&quot;</PreBuildEvent>
+        <PreBuildEvent>DEL /Q &quot;$(OUTPUTDIR)*$(OUTPUTEXT)&quot;</PreBuildEvent>
         <PreBuildEventIgnoreExitCode>False</PreBuildEventIgnoreExitCode>
         <PreLinkEvent/>
         <PreLinkEventIgnoreExitCode>False</PreLinkEventIgnoreExitCode>
-        <PostBuildEvent>COPY /Y &quot;$(OUTPUTDIR)$(OUTPUTFILENAME)&quot; &quot;$(OUTPUTDIR)Apophysis7X64$(OUTPUTEXT)&quot;&amp;&amp;DEL /Q &quot;$(OUTPUTDIR)$(OUTPUTFILENAME)&quot;</PostBuildEvent>
+        <PostBuildEvent>COPY /Y &quot;$(OUTPUTDIR)$(OUTPUTFILENAME)&quot; &quot;$(OUTPUTDIR)Apophysis7X64$(OUTPUTEXT)&quot;&amp;&amp;DEL /Q &quot;$(OUTPUTDIR)$(OUTPUTFILENAME)&quot;</PostBuildEvent>
         <PostBuildEventIgnoreExitCode>False</PostBuildEventIgnoreExitCode>
     </PropertyGroup>
 </Project>

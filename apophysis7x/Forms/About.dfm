@@ -1742,7 +1742,7 @@ object AboutForm: TAboutForm
     Width = 377
     Height = 13
     AutoSize = False
-    Caption = 'Unofficial version 2021-10-09 by www.michelesummo.it'
+    Caption = 'Unofficial version 2021-10-19 by www.michelesummo.it'
   end
   object Hackers: TLabel
     Left = 16

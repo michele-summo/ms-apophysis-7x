@@ -106,20 +106,26 @@ type
   end;
 
   PByteArray = ^TByteArray;
-  TByteArray = array[0..0] of byte;
+  //Use max screen size
+  TByteArray = array[0..65535] of byte;
 //  PLongintArray = ^TLongintArray;
 //  TLongintArray = array[0..0] of Longint;
   PRGBArray = ^TRGBArray;
-  TRGBArray = array[0..0] of TRGB;
+  TRGBArray = array[0..65535] of TRGB;
 
 ///////////////////////////////////////////////////////////////////////////////
 constructor TImageMaker.Create;
 var
   i: integer;
+  size: integer;
 begin
   AlphaPalette.logpal.palVersion := $300;
   AlphaPalette.logpal.palNumEntries := 256;
-  for i := 0 to 255 do
+  size := Length(AlphaPalette.logpal.palPalEntry);
+  if size > 255 then begin
+    size := 255;
+  end;
+  for i := 0 to size - 1 do
     with AlphaPalette.logpal.palPalEntry[i] do begin
       peRed := i;
       peGreen := i;
@@ -373,6 +379,8 @@ var
   ls: double;
   ii, jj: integer;
   fp: array[0..3] of double;
+  RowLength: integer;
+  AlphaRowLength: integer;
   Row: PRGBArray;
   AlphaRow: PbyteArray;
   vib, notvib: Integer;
@@ -401,6 +409,7 @@ var
   GetBucket: function(x, y: integer): TBucket of object;
   bucket: TBucket;
   bx, by: integer;
+  test: integer;
   label zero_alpha;
 begin
   SetLength(c, 4);
@@ -477,7 +486,6 @@ begin
     bx := 0;
 
     if (i and $3f = 0) and assigned(FOnProgress) then FOnProgress(i / fcp.Height);
-
     AlphaRow := PByteArray(FAlphaBitmap.scanline[YOffset + i]);
     Row := PRGBArray(FBitmap.scanline[YOffset + i]);
     for j := 0 to fcp.Width - 1 do begin
@@ -604,6 +612,7 @@ begin
         end
         else begin
 zero_alpha:
+          //MS XXX i=0 and j=1 => ERROR
           Row[j] := zero_BG;
           AlphaRow[j] := 0;
           continue;
@@ -660,6 +669,7 @@ zero_alpha:
         end
         else begin
           // no intensity so simply set the BG;
+          //MS XXX
           Row[j] := bgtot;
           continue;
         end;
