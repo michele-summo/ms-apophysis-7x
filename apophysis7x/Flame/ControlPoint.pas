@@ -1683,8 +1683,9 @@ procedure TControlPoint.InterpolateX(cp1, cp2: TControlPoint; Tm: double);
 var
   result: TControlPoint;
   c0, c1: double;
-  i, j: integer;
+  i, j, nv, nvn: integer;
   r, s, t: array[0..2] of double;
+  vn: string;
   v1, v2: double;
 //  totvar: double;
   {z,rhtime: double;}
@@ -1778,35 +1779,41 @@ begin
     cp2.xform[NXFORMS].symmetry := 1;
   end;
 
+  nv := NrVar;
+  nvn := GetNrVariableNames;
   for i := 0 to NXFORMS do begin
     Result.xform[i].density := c0 * cp1.xform[i].density + c1 * cp2.xform[i].density;
-    Result.xform[i].color := c0 * cp1.xform[i].color + c1 * cp2.xform[i].color;
-    Result.xform[i].symmetry := c0 * cp1.xform[i].symmetry + c1 * cp2.xform[i].symmetry;
-//    for j := 0 to NrVar - 1 do
-//      Result.xform[i].vars[j] := c0 * cp1.xform[i].vars[j] + c1 * cp2.xform[i].vars[j];
-    for j := 0 to NrVar-1 do
-      Result.xform[i].SetVariation(j, c0 * cp1.xform[i].GetVariation(j) + c1 * cp2.xform[i].GetVariation(j));
-      //Result.xform[i].vars[j] := c0 * cp1.xform[i].vars[j] + c1 * cp2.xform[i].vars[j];
-    for j:= 0 to GetNrVariableNames-1 do begin
-      cp1.xform[i].GetVariable(GetVariableNameAt(j), v1);
-      cp2.xform[i].GetVariable(GetVariableNameAt(j), v2);
-      v1 := c0 * v1 + c1 * v2;
-      Result.xform[i].SetVariable(GetVariableNameAt(j), v1);
-    end;
-(*
-    totvar := 0;
-    for j := 0 to NVARS - 1 do begin
-      totvar := totvar + Result.xform[i].vars[j];
-    end;
-    for j := 0 to NVARS - 1 do begin
-      if totVar <> 0 then Result.xform[i].vars[j] := Result.xform[i].vars[j] / totvar;
-    end;
-   *)
+    if Result.xform[i].density > 0 then begin
+      Result.xform[i].color := c0 * cp1.xform[i].color + c1 * cp2.xform[i].color;
+      Result.xform[i].symmetry := c0 * cp1.xform[i].symmetry + c1 * cp2.xform[i].symmetry;
+  //    for j := 0 to NrVar - 1 do
+  //      Result.xform[i].vars[j] := c0 * cp1.xform[i].vars[j] + c1 * cp2.xform[i].vars[j];
+      for j := 0 to nv-1 do begin
+        Result.xform[i].SetVariation(j, c0 * cp1.xform[i].GetVariation(j) + c1 * cp2.xform[i].GetVariation(j));
+      end;
+        //Result.xform[i].vars[j] := c0 * cp1.xform[i].vars[j] + c1 * cp2.xform[i].vars[j];
+      for j:= 0 to nvn-1 do begin
+        vn := GetVariableNameAt(j);
+        cp1.xform[i].GetVariable(vn, v1);
+        cp2.xform[i].GetVariable(vn, v2);
+        v1 := c0 * v1 + c1 * v2;
+        Result.xform[i].SetVariable(vn, v1);
+      end;
+  (*
+      totvar := 0;
+      for j := 0 to NVARS - 1 do begin
+        totvar := totvar + Result.xform[i].vars[j];
+      end;
+      for j := 0 to NVARS - 1 do begin
+        if totVar <> 0 then Result.xform[i].vars[j] := Result.xform[i].vars[j] / totvar;
+      end;
+     *)
 
-    // interpol matrix
-    for j := 0 to 2 do begin
-      Result.xform[i].c[j, 0] := c0 * cp1.xform[i].c[j, 0] + c1 * cp2.xform[i].c[j, 0];
-      Result.xform[i].c[j, 1] := c0 * cp1.xform[i].c[j, 1] + c1 * cp2.xform[i].c[j, 1];
+      // interpol matrix
+      for j := 0 to 2 do begin
+        Result.xform[i].c[j, 0] := c0 * cp1.xform[i].c[j, 0] + c1 * cp2.xform[i].c[j, 0];
+        Result.xform[i].c[j, 1] := c0 * cp1.xform[i].c[j, 1] + c1 * cp2.xform[i].c[j, 1];
+      end;
     end;
   end;
 

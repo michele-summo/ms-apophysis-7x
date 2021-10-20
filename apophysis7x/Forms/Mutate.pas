@@ -285,6 +285,7 @@ end;
 procedure TMutateForm.Interpolate;
 var i, j, k: Integer;
 begin
+  //XXX MS TOO SLOW!!
   if MainCp = nil then Exit;
   
   for i := 1 to 8 do
@@ -351,7 +352,7 @@ procedure TMutateForm.FormShow(Sender: TObject);
 var
   Registry: TRegistry;
 begin
-  { Read posution from registry }
+  { Read position from registry }
   Registry := TRegistry.Create;
   try
     Registry.RootKey := HKEY_CURRENT_USER;

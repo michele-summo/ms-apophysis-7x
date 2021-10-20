@@ -3,7 +3,7 @@
         <ProjectGuid>{AC01F3AB-4101-4C09-A648-1CC8E2C412D5}</ProjectGuid>
         <MainSource>Apophysis7X.dpr</MainSource>
         <Base>True</Base>
-        <Config Condition="'$(Config)'==''">Release</Config>
+        <Config Condition="'$(Config)'==''">Debug</Config>
         <TargetedPlatforms>3</TargetedPlatforms>
         <AppType>Application</AppType>
         <FrameworkType>VCL</FrameworkType>
@@ -97,10 +97,7 @@
         <UWP_DelphiLogo150>$(BDS)\bin\Artwork\Windows\UWP\delphi_UwpDefault_150.png</UWP_DelphiLogo150>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Win64)'!=''">
-        <PreBuildEvent><![CDATA[DEL /Q "$(OUTPUTDIR)*$(OUTPUTEXT)"
-$(PreBuildEvent)]]></PreBuildEvent>
         <PostBuildEvent><![CDATA[COPY /Y "$(OUTPUTDIR)$(OUTPUTFILENAME)" "$(OUTPUTDIR)Apophysis7X64$(OUTPUTEXT)"
-DEL /Q "$(OUTPUTDIR)$(OUTPUTFILENAME)"
 $(PostBuildEvent)]]></PostBuildEvent>
         <VerInfo_Build>0</VerInfo_Build>
         <VerInfo_MajorVer>1</VerInfo_MajorVer>
@@ -169,6 +166,8 @@ $(PostBuildEvent)]]></PostBuildEvent>
         <DCC_DcuOutput>Out\x64\dcu\</DCC_DcuOutput>
         <DCC_ExeOutput>Out\x64\</DCC_ExeOutput>
         <BT_BuildType>Debug</BT_BuildType>
+        <PostBuildEvent><![CDATA[COPY /Y "$(OUTPUTDIR)$(OUTPUTFILENAME)" "$(OUTPUTDIR)Apophysis7X64$(OUTPUTEXT)"
+$(PostBuildEvent)]]></PostBuildEvent>
     </PropertyGroup>
     <ItemGroup>
         <DelphiCompile Include="$(MainSource)">
@@ -376,19 +375,19 @@ $(PostBuildEvent)]]></PostBuildEvent>
     <Import Condition="Exists('$(BDS)\Bin\CodeGear.Delphi.Targets')" Project="$(BDS)\Bin\CodeGear.Delphi.Targets"/>
     <Import Condition="Exists('$(APPDATA)\Embarcadero\$(BDSAPPDATABASEDIR)\$(PRODUCTVERSION)\UserTools.proj')" Project="$(APPDATA)\Embarcadero\$(BDSAPPDATABASEDIR)\$(PRODUCTVERSION)\UserTools.proj"/>
     <PropertyGroup Condition="'$(Config)'=='Release' And '$(Platform)'=='Win64'">
-        <PreBuildEvent>DEL /Q &quot;$(OUTPUTDIR)*$(OUTPUTEXT)&quot;</PreBuildEvent>
+        <PreBuildEvent/>
         <PreBuildEventIgnoreExitCode>False</PreBuildEventIgnoreExitCode>
         <PreLinkEvent/>
         <PreLinkEventIgnoreExitCode>False</PreLinkEventIgnoreExitCode>
-        <PostBuildEvent>COPY /Y &quot;$(OUTPUTDIR)$(OUTPUTFILENAME)&quot; &quot;$(OUTPUTDIR)Apophysis7X64$(OUTPUTEXT)&quot;&amp;&amp;DEL /Q &quot;$(OUTPUTDIR)$(OUTPUTFILENAME)&quot;</PostBuildEvent>
+        <PostBuildEvent>COPY /Y &quot;$(OUTPUTDIR)$(OUTPUTFILENAME)&quot; &quot;$(OUTPUTDIR)Apophysis7X64$(OUTPUTEXT)&quot;</PostBuildEvent>
         <PostBuildEventIgnoreExitCode>False</PostBuildEventIgnoreExitCode>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Config)'=='Debug' And '$(Platform)'=='Win64'">
-        <PreBuildEvent>DEL /Q &quot;$(OUTPUTDIR)*$(OUTPUTEXT)&quot;</PreBuildEvent>
+        <PreBuildEvent/>
         <PreBuildEventIgnoreExitCode>False</PreBuildEventIgnoreExitCode>
         <PreLinkEvent/>
         <PreLinkEventIgnoreExitCode>False</PreLinkEventIgnoreExitCode>
-        <PostBuildEvent>COPY /Y &quot;$(OUTPUTDIR)$(OUTPUTFILENAME)&quot; &quot;$(OUTPUTDIR)Apophysis7X64$(OUTPUTEXT)&quot;&amp;&amp;DEL /Q &quot;$(OUTPUTDIR)$(OUTPUTFILENAME)&quot;</PostBuildEvent>
+        <PostBuildEvent>COPY /Y &quot;$(OUTPUTDIR)$(OUTPUTFILENAME)&quot; &quot;$(OUTPUTDIR)Apophysis7X64$(OUTPUTEXT)&quot;&amp;&amp;COPY /Y &quot;$(OUTPUTDIR)$(OUTPUTFILENAME)&quot; &quot;$(OUTPUTDIR)Apophysis7X64$(OUTPUTEXT)&quot;</PostBuildEvent>
         <PostBuildEventIgnoreExitCode>False</PostBuildEventIgnoreExitCode>
     </PropertyGroup>
 </Project>
