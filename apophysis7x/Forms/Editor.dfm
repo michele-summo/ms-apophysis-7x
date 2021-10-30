@@ -478,7 +478,7 @@ object EditForm: TEditForm
           Top = 71
           Width = 298
           Height = 466
-          ActivePage = TabSheet4
+          ActivePage = tabVariations
           Anchors = [akLeft, akTop, akRight, akBottom]
           MultiLine = True
           TabOrder = 3

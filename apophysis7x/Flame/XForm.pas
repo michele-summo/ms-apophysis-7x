@@ -34,7 +34,8 @@ uses
 {$else}
 AsmRandom,
 {$endif}
-  XFormMan, BaseVariation;
+  XFormMan, BaseVariation, System.Classes, System.Generics.Collections,
+  VariationDictionary;
 
 const
   MAX_WEIGHT = 1000.0;
@@ -99,7 +100,8 @@ type
 
     Orientationtype: integer;
   private
-    vars: array of double; // {normalized} interp coefs between variations
+    //vars: array of double; // {normalized} interp coefs between variations
+    vars: TVariationDictionary;
     FNrFunctions: Integer;
     FFunctionList: array of TCalcFunction;
     FCalcFunctionList: array of TCalcFunction;
@@ -129,6 +131,8 @@ type
     px_sin, px_cos, py_sin, py_cos: double;
 
     FRegVariations: array of TBaseVariation;
+
+    //UsedTrans : TStringList;
 
     procedure PrecalcAngle;
     procedure PrecalcSinCos;
@@ -220,6 +224,8 @@ type
     function GetVariation(index : integer) : double;
     procedure SetVariation(index : integer; value : double);
     function NumVariations : integer;
+
+    function Variations: TEnumerable<integer>;
   end;
 
 implementation
@@ -232,7 +238,8 @@ const
 
 function TXForm.NumVariations : integer;
 begin
-  Result := length(vars);
+  Result := NrVar;
+  //Result := vars.Count;
 end;
 function TXForm.GetVariation(index : integer) : double;
 begin
@@ -254,10 +261,11 @@ end;
 ///////////////////////////////////////////////////////////////////////////////
 constructor TXForm.Create;
 begin
+  //UsedTrans := TStringList.Create();
   AddRegVariations;
   BuildFunctionlist;
-  SetLength(vars, NRLOCVAR + Length(FRegVariations));
-
+  //SetLength(vars, NRLOCVAR + Length(FRegVariations));
+  vars := TVariationDictionary.Create;
   Clear;
 end;
 
@@ -286,7 +294,8 @@ begin
   p[2, 1] := 0;
 
   vars[0] := 1;
-  for i := 1 to High(vars) do
+  //for i := 1 to High(vars) do
+  for i in vars do
     vars[i] := 0;
 
   for i := 0 to NXFORMS do
@@ -1289,7 +1298,8 @@ var
 begin
 //  if assigned(Script) then
 //    Script.Free;
-
+  vars.Destroy;
+  vars := nil;
   for i := 0 to High(FRegVariations) do
     FRegVariations[i].Free;
 
@@ -1357,7 +1367,8 @@ begin
   if Not assigned(XForm) then
     Exit;
 
-  for i := 0 to High(vars) do
+  //for i := 0 to High(vars) do
+  for i in vars do
     vars[i] := XForm.vars[i];
 
   c := Xform.c;
@@ -1520,6 +1531,11 @@ begin
   for i := 0 to High(FRegVariations) do begin
     if FRegVariations[i].SetVariableStr(name, value) then break;
   end;
+end;
+
+function TXForm.Variations: TEnumerable<integer>;
+begin
+  Result := vars.Keys;
 end;
 
 end.

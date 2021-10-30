@@ -1788,9 +1788,18 @@ begin
       Result.xform[i].symmetry := c0 * cp1.xform[i].symmetry + c1 * cp2.xform[i].symmetry;
   //    for j := 0 to NrVar - 1 do
   //      Result.xform[i].vars[j] := c0 * cp1.xform[i].vars[j] + c1 * cp2.xform[i].vars[j];
-      for j := 0 to nv-1 do begin
+  //    for j := 0 to nv-1 do begin
+  //      Result.xform[i].SetVariation(j, c0 * cp1.xform[i].GetVariation(j) + c1 * cp2.xform[i].GetVariation(j));
+  //    end;
+
+      for j in cp1.xform[i].Variations do begin
         Result.xform[i].SetVariation(j, c0 * cp1.xform[i].GetVariation(j) + c1 * cp2.xform[i].GetVariation(j));
       end;
+
+      for j in cp2.xform[i].Variations do begin
+        Result.xform[i].SetVariation(j, c0 * cp1.xform[i].GetVariation(j) + c1 * cp2.xform[i].GetVariation(j));
+      end;
+
         //Result.xform[i].vars[j] := c0 * cp1.xform[i].vars[j] + c1 * cp2.xform[i].vars[j];
       for j:= 0 to nvn-1 do begin
         vn := GetVariableNameAt(j);

@@ -192,6 +192,7 @@ $(PostBuildEvent)]]></PostBuildEvent>
         <DCCReference Include="Core\Translation.pas"/>
         <DCCReference Include="IO\ParameterIO.pas"/>
         <DCCReference Include="Core\Bezier.pas"/>
+        <DCCReference Include="Core\VariationDictionary.pas"/>
         <DCCReference Include="Flame\RndFlame.pas"/>
         <DCCReference Include="Flame\ControlPoint.pas"/>
         <DCCReference Include="ColorMap\cmapdata.pas"/>

@@ -60,6 +60,7 @@ uses
   Translation in 'Core\Translation.pas',
   ParameterIO in 'IO\ParameterIO.pas',
   Bezier in 'Core\Bezier.pas',
+  VariationDictionary in 'Core\VariationDictionary.pas',
 
 {-- FLAME --}
   RndFlame in 'Flame\RndFlame.pas',
