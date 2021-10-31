@@ -23,7 +23,7 @@ typedef struct
 APO_PLUGIN("ms_parchment");
 APO_VARIABLES(
 	VAR_REAL(ms_parchment_n, /* default: */ 3),
-	VAR_REAL(ms_parchment_weight, /* default: */ 1),
+	VAR_REAL(ms_parchment_weight, /* default: */ 2),
 	VAR_REAL(ms_parchment_dec_weight, /* default: */ 1),
 	VAR_REAL(ms_parchment_dec_radius, /* default: */ 0),
 	//VAR_REAL(ms_parchment_real, /* default: */ 0.0),

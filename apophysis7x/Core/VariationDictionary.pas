@@ -5,8 +5,10 @@ interface
   type TVariationDictionary = class
     private
       _dict: TDictionary<integer, double>;
+      _fastArray: array of double;
 
       function GetData(index: integer) : double;
+      function GetDataDict(index: integer) : double;
       procedure SetData(index: integer; value: double);
     public
       constructor Create;
@@ -18,11 +20,14 @@ interface
       function Keys: TEnumerable<integer>;
   end;
 implementation
+  uses XFormMan;
+
   const EPS: double = 1E-10;
 
   constructor TVariationDictionary.Create;
   begin
     _dict := TDictionary<integer, double>.Create;
+    SetLength(_fastArray, NrVar);
   end;
 
   destructor TVariationDictionary.Destroy;
@@ -30,10 +35,12 @@ implementation
      _dict.Destroy;
      _dict := nil;
 
+     SetLength(_fastArray, 0);
+
      inherited;
   end;
 
-  function TVariationDictionary.GetData(index: Integer): Double;
+  function TVariationDictionary.GetDataDict(index: Integer): Double;
   begin
     Result := 0.0;
 
@@ -47,6 +54,11 @@ implementation
         Result := 0.0;
       end;
     end;
+  end;
+
+  function TVariationDictionary.GetData(index: Integer): Double;
+  begin
+    Result := _fastArray[index];
   end;
 
   procedure TVariationDictionary.SetData(index: Integer; value: Double);
@@ -69,7 +81,9 @@ implementation
     else if not isZero then
     begin
       _dict.AddOrSetValue(index, value);
-    end
+    end;
+
+    _fastArray[index] := GetDataDict(index);
   end;
 
   function TVariationDictionary.Count: Integer;
