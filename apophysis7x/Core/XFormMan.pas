@@ -64,14 +64,13 @@ var
   Variable2VariationIndex : array of integer;
   FNToVNList : array of TFNToVN;
   FNToVNCount: integer;
-  VariablesCache: TDictionary<integer, TList<integer>>;
+  VariablesCache: array[0..65535] of TList<integer>;
   EmptyList: TList<integer>;
 
 procedure InitializeXFormMan;
 begin
   VariationList := TList.Create;
   VariableNames := TStringlist.create;
-  VariablesCache := TDictionary<integer, TList<integer>>.Create;
   EmptyList := TList<integer>.Create;
   SetLength(Variable2VariationIndex,0);
   SetLength(FNToVNList, 0);
@@ -182,8 +181,14 @@ begin
     TVariationLoader(VariationList[i]).Free;
   VariationList.Free;
 
-  VariablesCache.Destroy;
-  VariablesCache := nil;
+  for i := Low(VariablesCache) to High(VariablesCache) do
+  begin
+    if VariablesCache[i] <> nil then
+    begin
+      VariablesCache[i].Destroy;
+      VariablesCache[i] := nil;
+    end;
+  end;
 
   EmptyList.Destroy;
   EmptyList := nil;
@@ -322,7 +327,7 @@ begin
     vrl.Add(prevNumVariables + i);
   end;
 
-  VariablesCache.AddOrSetValue(NrVar-1, vrl);
+  VariablesCache[NrVar-1] := vrl;
 end;
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -352,10 +357,9 @@ end;
 ///////////////////////////////////////////////////////////////////////////////
 function GetVariables(const index: integer): TList<integer>;
 begin
-  if not VariablesCache.TryGetValue(index, Result) then
-  begin
+  Result := VariablesCache[index];
+  if Result = nil then
     Result := EmptyList;
-  end;
 end;
 
 ///////////////////////////////////////////////////////////////////////////////
