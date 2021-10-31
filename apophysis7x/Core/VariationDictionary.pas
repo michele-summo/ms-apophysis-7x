@@ -39,7 +39,7 @@ implementation
 
     if not _dict.TryGetValue(index, Result) then
     begin
-      if (_dict.Count = 0) and (index = 0) then
+      if (index = 0) then
       begin
         Result := 1.0;
       end
@@ -50,12 +50,23 @@ implementation
   end;
 
   procedure TVariationDictionary.SetData(index: Integer; value: Double);
+  var
+    isZero: boolean;
+    valueZero: double;
   begin
-    if (value <= EPS) and (_dict.ContainsKey(index)) then
+    if index = 0 then
+    begin
+      isZero := ( 1-EPS <= value ) and ( value <= 1+EPS );
+    end
+    else
+    begin
+      isZero := ( -EPS <= value ) and ( value <= EPS );
+    end;
+    if isZero and (_dict.ContainsKey(index)) then
     begin
       _dict.Remove(index);
     end
-    else if (value > EPS) then
+    else if not isZero then
     begin
       _dict.AddOrSetValue(index, value);
     end
