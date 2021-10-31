@@ -243,7 +243,7 @@ function CalcBinaryFlameSize(cp: TControlPoint): integer;
 
 implementation
 
-uses global;
+uses global, Generics.Collections;
 
 var
   var_distrib: array of integer;
@@ -1683,7 +1683,7 @@ procedure TControlPoint.InterpolateX(cp1, cp2: TControlPoint; Tm: double);
 var
   result: TControlPoint;
   c0, c1: double;
-  i, j, nv, nvn: integer;
+  i, j, k, nv, nvn: integer;
   r, s, t: array[0..2] of double;
   vn: string;
   v1, v2: double;
@@ -1794,20 +1794,38 @@ begin
 
       for j in cp1.xform[i].Variations do begin
         Result.xform[i].SetVariation(j, c0 * cp1.xform[i].GetVariation(j) + c1 * cp2.xform[i].GetVariation(j));
+
+        for k in GetVariables(j) do
+        begin
+          vn := GetVariableNameAt(k);
+          cp1.xform[i].GetVariable(vn, v1);
+          cp2.xform[i].GetVariable(vn, v2);
+          v1 := c0 * v1 + c1 * v2;
+          Result.xform[i].SetVariable(vn, v1);
+        end;
       end;
 
       for j in cp2.xform[i].Variations do begin
         Result.xform[i].SetVariation(j, c0 * cp1.xform[i].GetVariation(j) + c1 * cp2.xform[i].GetVariation(j));
+
+        for k in GetVariables(j) do
+        begin
+          vn := GetVariableNameAt(k);
+          cp1.xform[i].GetVariable(vn, v1);
+          cp2.xform[i].GetVariable(vn, v2);
+          v1 := c0 * v1 + c1 * v2;
+          Result.xform[i].SetVariable(vn, v1);
+        end;
       end;
 
         //Result.xform[i].vars[j] := c0 * cp1.xform[i].vars[j] + c1 * cp2.xform[i].vars[j];
-      for j:= 0 to nvn-1 do begin
-        vn := GetVariableNameAt(j);
-        cp1.xform[i].GetVariable(vn, v1);
-        cp2.xform[i].GetVariable(vn, v2);
-        v1 := c0 * v1 + c1 * v2;
-        Result.xform[i].SetVariable(vn, v1);
-      end;
+      //for j:= 0 to nvn-1 do begin
+      //  vn := GetVariableNameAt(j);
+      //  cp1.xform[i].GetVariable(vn, v1);
+      //  cp2.xform[i].GetVariable(vn, v2);
+      //  v1 := c0 * v1 + c1 * v2;
+      //  Result.xform[i].SetVariable(vn, v1);
+      //end;
   (*
       totvar := 0;
       for j := 0 to NVARS - 1 do begin

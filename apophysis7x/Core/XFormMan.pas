@@ -26,7 +26,7 @@ unit XFormMan;
 interface
 
 uses
-  BaseVariation, SysUtils, Forms, Windows;
+  BaseVariation, SysUtils, Forms, Windows, Classes, Generics.Collections;
 
 const
   NRLOCVAR = 29;
@@ -53,11 +53,9 @@ procedure InitializeXFormMan;
 procedure DestroyXFormMan;
 procedure RegisterVariationFile(filename, name: string);
 function GetFileNameOfVariation(name: string): string;
+function GetVariables(const index: integer): TList<integer>;
 
 implementation
-
-uses
-  Classes;
 
 var
   VariationList: TList;
@@ -66,11 +64,15 @@ var
   Variable2VariationIndex : array of integer;
   FNToVNList : array of TFNToVN;
   FNToVNCount: integer;
+  VariablesCache: TDictionary<integer, TList<integer>>;
+  EmptyList: TList<integer>;
 
 procedure InitializeXFormMan;
 begin
   VariationList := TList.Create;
   VariableNames := TStringlist.create;
+  VariablesCache := TDictionary<integer, TList<integer>>.Create;
+  EmptyList := TList<integer>.Create;
   SetLength(Variable2VariationIndex,0);
   SetLength(FNToVNList, 0);
   FNToVNCount := 0;
@@ -179,6 +181,12 @@ begin
   for i := 0 to VariationList.Count-1 do
     TVariationLoader(VariationList[i]).Free;
   VariationList.Free;
+
+  VariablesCache.Destroy;
+  VariablesCache := nil;
+
+  EmptyList.Destroy;
+  EmptyList := nil;
 
   Finalize(Variable2VariationIndex);
   Finalize(FNToVNList);
@@ -291,8 +299,12 @@ procedure RegisterVariation(Variation: TVariationLoader; supports3D, supportsDC 
 var
   i: integer;
   prevNumVariables:integer;
+  vrl: TList<integer>;
+  vn: string;
+  vrn: string;
 begin
-  OutputDebugString(PChar(Variation.GetName));
+  vn := Variation.GetName;
+  OutputDebugString(PChar(vn));
 
   VariationList.Add(Variation);
   Variation.Supports3D := supports3D;
@@ -300,10 +312,17 @@ begin
 
   prevNumVariables := GetNrVariableNames;
   setLength(Variable2VariationIndex, prevNumVariables + Variation.GetNrVariables);
+
+  vrl := TList<integer>.Create;
+
   for i := 0 to Variation.GetNrVariables - 1 do begin
-    VariableNames.Add(Variation.GetVariableNameAt(i));
+    vrn := Variation.GetVariableNameAt(i);
+    VariableNames.Add(vrn);
     Variable2VariationIndex[prevNumVariables + i] := NrVar-1;
+    vrl.Add(prevNumVariables + i);
   end;
+
+  VariablesCache.AddOrSetValue(NrVar-1, vrl);
 end;
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -328,6 +347,15 @@ end;
 function GetVariableNameAt(const Index: integer): string;
 begin
   Result := VariableNames[Index];
+end;
+
+///////////////////////////////////////////////////////////////////////////////
+function GetVariables(const index: integer): TList<integer>;
+begin
+  if not VariablesCache.TryGetValue(index, Result) then
+  begin
+    Result := EmptyList;
+  end;
 end;
 
 ///////////////////////////////////////////////////////////////////////////////
