@@ -1371,6 +1371,9 @@ begin
   for i in vars do
     vars[i] := XForm.vars[i];
 
+  for i in XForm.vars do
+    vars[i] := XForm.vars[i];
+
   c := Xform.c;
   p := Xform.p;
   density := XForm.density;

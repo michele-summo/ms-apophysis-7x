@@ -3,6 +3,17 @@ unit VariationDictionary;
 interface
   uses System.Classes, System.Generics.Collections;
   type TVariationDictionary = class
+    strict private
+      type
+          TEnumerator = class(TEnumerator<integer>)
+      private
+        _array: TList<integer>;
+        _enum: TEnumerator<integer>;
+      public
+        function DoGetCurrent: integer; override;
+        function DoMoveNext: boolean; override;
+        constructor Create(pToEnum: TEnumerable<integer>);
+      end;
     private
       _dict: TDictionary<integer, double>;
       _fastArray: array of double;
@@ -93,12 +104,43 @@ implementation
 
   function TVariationDictionary.GetEnumerator: TEnumerator<integer>;
   begin
-    Result := _dict.Keys.GetEnumerator;
+    //Result := _dict.Keys.GetEnumerator;
+    Result := TVariationDictionary.TEnumerator.Create(_dict.Keys);
   end;
 
   function TVariationDictionary.Keys: TEnumerable<integer>;
   begin
     Result := _dict.Keys;
   end;
-end.
 
+  constructor TVariationDictionary.TEnumerator.Create(pToEnum: TEnumerable<integer>);
+  begin
+    Inherited Create;
+
+    _array := TList<integer>.Create;
+    _array.AddRange(pToEnum);
+    _enum := _array.GetEnumerator;
+  end;
+
+  function TVariationDictionary.TEnumerator.DoMoveNext: boolean;
+  begin
+    Result := false;
+    if _enum <> nil then
+    begin
+      Result := _enum.MoveNext;
+      if not Result then
+      begin
+        _enum.Destroy;
+        _array.Destroy;
+
+        _enum := nil;
+        _array := nil;
+      end;
+    end;
+  end;
+
+  function TVariationDictionary.TEnumerator.DoGetCurrent: integer;
+  begin
+    Result := _enum.Current; // Based on your example, it's value you want to extract
+  end;
+end.

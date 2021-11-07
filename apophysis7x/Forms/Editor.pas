@@ -5720,6 +5720,7 @@ end;
 procedure TEditForm.mnuLinkPrexformClickClick(Sender: TObject);
 var
   i: integer;
+  w: double;
 begin
   if (Transforms < NXFORMS) and (SelectedTriangle <> Transforms) then
   begin
@@ -5729,8 +5730,10 @@ begin
 
     MainTriangles[Transforms] := MainTriangles[-1];
     cp.xform[Transforms].Clear;
-    cp.xform[Transforms].density := 0.5;
+    cp.xform[Transforms].density := cp.xform[SelectedTriangle].density;
     cp.xform[Transforms].SetVariation(0, 1);
+
+    cp.xform[SelectedTriangle].density := 0.5;
 
     for i := 0 to Transforms-1 do begin
       cp.xform[i].modWeights[Transforms] := cp.xform[i].modWeights[SelectedTriangle];

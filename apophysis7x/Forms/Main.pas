@@ -69,6 +69,8 @@ type
 type
   TThumbnailThread = class(TThread)
     private
+      _terminated: boolean;
+      _inTermination: boolean;
       ThumbnailSize : integer;
       Flames : TStringList;
       FileName : string;
@@ -76,6 +78,7 @@ type
       
     public
       constructor Create(SourceFile : string; FlameNames : TstringList);
+      procedure Terminate;
       destructor Destroy; override;
       procedure Execute; override;
   end;
@@ -512,6 +515,9 @@ uses
   FormExport, RndFlame, Tracer, Types, SplashForm, varGenericPlugin;
 
 {$R *.DFM}
+
+var
+  ThumbThread: TThumbnailThread;
 
 procedure AssignBitmapProperly(var Bitmap:TBitmap; Source:TBitmap);
 begin
@@ -6336,6 +6342,13 @@ end;
 
 procedure TMainForm.btnViewIconsClick(Sender: TObject);
 begin
+  if ThumbThread <> nil then
+  begin
+    ThumbThread.Terminate;
+    ThumbThread.Destroy;
+    ThumbThread := nil;
+  end;
+
   ListView1.ViewStyle := vsIcon;
   btnViewList.Down := false;
   btnViewIcons.Down := true;
@@ -6657,6 +6670,8 @@ var
   i : integer;
   ListItem : TListItem;
 begin
+  _terminated := false;
+  _inTermination := false;
   ThumbnailSize := MainForm.UsedThumbnails.Width;
   Flames := FlameNames;
   FileName := SourceFile;
@@ -6708,6 +6723,9 @@ var
   stored_thumb_size : integer;
   memstream : TMemoryStream;
 begin
+  _terminated := false;
+  _inTermination := false;
+
   Inherited;
 
   Renderer := TRenderer.Create;
@@ -6715,6 +6733,9 @@ begin
 
   //MainForm.ListView1.Items.BeginUpdate;
   for i := 0 to Flames.Count - 1 do begin
+    if _inTermination then
+      break;
+
     cp.Clear;
     flameXML := LoadXMLFlameText(filename, Flames[i]);
     MainForm.ParseXML(cp, PCHAR(flameXML), true);
@@ -6792,6 +6813,7 @@ begin
     end;
   end;
   //MainForm.ListView1.Items.EndUpdate;
+  _inTermination := false;
 
   cp.Free;
   Renderer.Free;
@@ -6801,6 +6823,15 @@ begin
     Flames.Free;
     Flames := nil;
   end;
+
+  _terminated := true;
+end;
+
+procedure TThumbnailThread.Terminate;
+begin
+  _inTermination := true;
+  while not _terminated do
+    Sleep(300);
 end;
 
 procedure ListXMLSimple(FileName: string; sel: integer);
@@ -6870,6 +6901,12 @@ var
   thread   : TThumbnailThread;
   brk      : boolean;
 begin
+  if ThumbThread <> nil then
+  begin
+    ThumbThread.Terminate;
+    ThumbThread.Destroy;
+    ThumbThread := nil;
+  end;
 
   FStrings := TStringList.Create;
   FFlames  := TStringList.Create;
@@ -6923,6 +6960,8 @@ begin
   end;
 
   thread.Resume;
+
+  ThumbThread := thread;
 end;
 
 procedure ListXML(FileName: string; sel: integer);
