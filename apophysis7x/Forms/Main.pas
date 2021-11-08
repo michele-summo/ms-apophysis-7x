@@ -6716,7 +6716,7 @@ var
 
   flameXML : string;
   w, h, r : double;
-  i : integer;
+  i, sz : integer;
 
   stored_thumb : TJPegImage;
   stored_thumb_data : TBinArray;
@@ -6726,13 +6726,15 @@ begin
   _terminated := false;
   _inTermination := false;
 
+  sz := Flames.Count;
+
   Inherited;
 
   Renderer := TRenderer.Create;
   cp := TControlPoint.Create;
 
   //MainForm.ListView1.Items.BeginUpdate;
-  for i := 0 to Flames.Count - 1 do begin
+  for i := 0 to sz - 1 do begin
     if _inTermination then
       break;
 
@@ -6830,8 +6832,6 @@ end;
 procedure TThumbnailThread.Terminate;
 begin
   _inTermination := true;
-  while not _terminated do
-    Sleep(300);
 end;
 
 procedure ListXMLSimple(FileName: string; sel: integer);

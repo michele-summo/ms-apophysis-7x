@@ -82,7 +82,7 @@ type
     FOnOperation: TOnOperation;
     FCopyBuffer: TCopyBufferCallback;
     strOutput: TStrings;
-
+    destroyed: boolean;
   protected
     Buckets: TBucketArray;
     ZBuffer: TZBuffer;
@@ -156,6 +156,8 @@ type
   public
     constructor Create; virtual;
     destructor Destroy; override;
+
+    procedure DoDestroy;
 
     procedure Hibernate(filePath: string);
     procedure Resume(filePath: string);
@@ -452,17 +454,26 @@ end;
 ///////////////////////////////////////////////////////////////////////////////
 destructor TBaseRenderer.Destroy;
 begin
-  FImageMaker.Free;
-
-  SetLength(buckets, 1, 1);
-  SetLength(zbuffer, 1, 1);
-
-  if assigned(FCP) then
-    FCP.Free;
-
-  TrimWorkingSet;
+  DoDestroy;
 
   inherited;
+end;
+
+procedure TBaseRenderer.DoDestroy;
+begin
+  if not destroyed then
+  begin
+    FImageMaker.Free;
+
+    SetLength(buckets, 1, 1);
+    SetLength(zbuffer, 1, 1);
+
+    if assigned(FCP) then
+      FCP.Free;
+
+    TrimWorkingSet;
+  end;
+  destroyed := true;
 end;
 
 procedure TBaseRenderer.Operation(op: integer);

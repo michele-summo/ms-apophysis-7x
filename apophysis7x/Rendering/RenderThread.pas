@@ -232,6 +232,8 @@ RenderMore:
     Trace('Sending WM_THREAD_TERMINATE');
     PostMessage(TargetHandle, WM_THREAD_TERMINATE, 0, ThreadID);
     Trace('Terminated');
+
+    FRenderer.DoDestroy;
     exit;
   end
   else begin
