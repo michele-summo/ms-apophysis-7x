@@ -2033,9 +2033,9 @@ begin
             repeat
               if FileList.Count > 0 then
                 FileList.Delete(FileList.Count - 1);
-            until (Pos('<' + Tag + '>', FileList[FileList.count - 1]) <> 0) or
-                  (Pos('</flames>', FileList[FileList.count - 1]) <> 0) or
-                  (FileList.Count = 0);
+            until (FileList.Count = 0) or
+                  (Pos('<' + Tag + '>', FileList[FileList.count - 1]) <> 0) or
+                  (Pos('</flames>', FileList[FileList.count - 1]) <> 0);
         end else
         begin
           FileList.Delete(FileList.Count - 1);
