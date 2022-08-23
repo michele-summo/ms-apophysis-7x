@@ -556,6 +556,10 @@ begin
     if cp1.gamma_threshold <> 0 then
       parameters := parameters + format('gamma_threshold="%g" ', [cp1.gamma_threshold]);
 
+    // MS
+    if cp1.invert_luminance then
+      parameters := parameters + 'invert_luminance="1" ';
+
     if cp1.soloXform >= 0 then
       parameters := parameters + format('soloxform="%d" ', [cp1.soloXform]);
 

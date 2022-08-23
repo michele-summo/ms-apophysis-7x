@@ -367,6 +367,30 @@ begin
   Fcp := CP;
 end;
 
+procedure InvertLuminance(var red: integer; var green: integer; var blue: integer);
+var
+  max, min, c: integer;
+begin
+  max := red;
+  min := red;
+
+  if max < green then
+    max := green;
+  if min > green then
+    min := green;
+
+  if max < blue then
+    max := blue;
+  if min > blue then
+    min := blue;
+
+  c := 255 - max - min;
+
+  red := red + c;
+  green := green + c;
+  blue := blue + c;
+end;
+
 ///////////////////////////////////////////////////////////////////////////////
 procedure TImageMaker.CreateImage(YOffset: integer);
 var
@@ -646,6 +670,9 @@ zero_alpha:
         if (bi < 0) then bi := 0
         else if (bi > 255) then bi := 255;
 
+        //MS MUTATION
+        if fcp.invert_luminance then
+          InvertLuminance(ri, gi, bi);
         Row[j].red := ri;
         Row[j].green := gi;
         Row[j].blue := bi;
@@ -701,6 +728,9 @@ zero_alpha:
         if (bi < 0) then bi := 0
         else if (bi > 255) then bi := 255;
 
+        //MS MUTATION
+        if fcp.invert_luminance then
+          InvertLuminance(ri, gi, bi);
         Row[j].red := ri;
         Row[j].green := gi;
         Row[j].blue := bi;

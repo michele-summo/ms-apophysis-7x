@@ -166,6 +166,7 @@ type
     Panel5: TPanel;
     cbChannel: TComboBox;
     btnResetCurves: TButton;
+    chkInvertLuminance: TCheckBox;
     procedure FormCreate(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormDestroy(Sender: TObject);
@@ -319,6 +320,7 @@ type
     procedure WeightChange(Sender: TObject);
     procedure curveChange(Sender: TObject);
     procedure btnResetCurvesClick(Sender: TObject);
+    procedure chkInvertLuminanceClick(Sender: TObject);
 
   private
     CurvesControl: TCurvesControl;
@@ -472,6 +474,7 @@ begin
     editPPU.Text := Format('%.6g', [100*cp.pixels_per_unit/PreviewImage.Width]);
 
     txtGammaThreshold.Text := Format('%.3g', [cp.gammaThreshRelative]);
+    chkInvertLuminance.Checked := cp.invert_luminance;
 
     // 3d camera
     txtPitch.Text := Format('%.6g', [cp.cameraPitch * 180 / PI]);
@@ -2015,6 +2018,15 @@ begin
   begin
     key := #0;
     SetMainWindowSize;
+  end;
+end;
+
+procedure TAdjustForm.chkInvertLuminanceClick(Sender: TObject);
+begin
+  if chkInvertLuminance.Checked <> cp.invert_luminance then begin
+    MainForm.UpdateUndo;
+    cp.invert_luminance := chkInvertLuminance.Checked;
+    UpdateFlame;
   end;
 end;
 

@@ -1655,6 +1655,10 @@ begin
     if cp1.vibrancy <> 1 then
       parameters := parameters + format('vibrancy="%g" ', [cp1.vibrancy]);
 
+    // MS
+    if cp1.invert_luminance then
+      parameters := parameters + 'invert_luminance="1" ';
+
     if cp1.gamma_threshold <> 0 then
       parameters := parameters + format('gamma_threshold="%g" ', [cp1.gamma_threshold]);
 
@@ -1836,6 +1840,10 @@ begin
 
     if cp1.vibrancy <> 1 then
       parameters := parameters + format('vibrancy="%g" ', [cp1.vibrancy]);
+
+    // MS
+    if cp1.invert_luminance then
+      parameters := parameters + 'invert_luminance="1" ';
 
     if cp1.gamma_threshold <> 0 then
       parameters := parameters + format('gamma_threshold="%g" ', [cp1.gamma_threshold]);
@@ -5114,6 +5122,10 @@ begin
     if v <> '' then Parsecp.gamma := StrToFloat(String(v));
     v := Attributes.Value('vibrancy');
     if v <> '' then Parsecp.vibrancy := StrToFloat(String(v));
+    // MS
+    v := Attributes.Value('invert_luminance');
+    if v <> '' then Parsecp.invert_luminance := StrToInt(String(v)) <> 0;
+
     if (LimitVibrancy) and (Parsecp.vibrancy > 1) then Parsecp.vibrancy := 1;
     v := Attributes.Value('gamma_threshold');
     if v <> '' then Parsecp.gamma_threshold := StrToFloat(String(v))

@@ -111,6 +111,7 @@ type
     Fbrightness: double; // 1.0 = normal
     contrast: double; // 1.0 = normal
     gamma: double;
+    invert_luminance: boolean; //MS
     Width: integer;
     Height: integer;
     spatial_oversample: integer;
@@ -962,6 +963,10 @@ begin
     end else if AnsiCompareText(CurrentToken, 'vibrancy') = 0 then begin
       Inc(ParsePos);
       vibrancy := StrToFloat(ParseValues[ParsePos]);
+    //MS
+    end else if AnsiCompareText(CurrentToken, 'invert_luminance') = 0 then begin
+      Inc(ParsePos);
+      invert_luminance := StrToInt(ParseValues[ParsePos]) <> 0;
     end else if AnsiCompareText(CurrentToken, 'gamma_threshold') = 0 then begin
       Inc(ParsePos);
       gamma_threshold := StrToFloat(ParseValues[ParsePos]);
@@ -1936,8 +1941,9 @@ begin
 //  sl.add(format('nbatches %d white_level %d background %f %f %f', - changed to integers - mt
   sl.add(format('nbatches %d white_level %d background %d %d %d',
     [nbatches, white_level, background[0], background[1], background[2]]));
-  sl.add(format('brightness %f gamma %f vibrancy %f gamma_threshold %f hue_rotation %f cmap_inter %d',
-    [Fbrightness * BRIGHT_ADJUST, gamma, vibrancy, gamma_threshold, hue_rotation, cmap_inter]));
+  // MS
+  sl.add(format('brightness %f gamma %f vibrancy %f gamma_threshold %f hue_rotation %f cmap_inter %d invert_luminance %d',
+    [Fbrightness * BRIGHT_ADJUST, gamma, vibrancy, gamma_threshold, hue_rotation, cmap_inter, IfThen(invert_luminance, 1, 0)]));
   sl.add(format('finalxformenabled %d', [ifthen(finalxformenabled, 1, 0)]));
   sl.add(format('soloxform %d', [soloXform]));
 
@@ -2134,6 +2140,10 @@ begin
 
   DoubleToBlock(block, 0, vibrancy);
   DoubleToBlock(block, 8, hue_rotation);
+  BlockWrite(handle, block, 1);
+
+  // MS
+  Int32ToBlock(block, 0, IfThen(invert_luminance, 1, 0));
   BlockWrite(handle, block, 1);
 
   nchaos := Min(NumXForms+1, NXFORMS);
