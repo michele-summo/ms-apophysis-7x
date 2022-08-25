@@ -367,28 +367,28 @@ begin
   Fcp := CP;
 end;
 
-procedure InvertLuminance(var red: integer; var green: integer; var blue: integer);
+procedure InvertLuminance(var rgb: TRGB);
 var
-  max, min, c: integer;
+  max, min, c: byte;
 begin
-  max := red;
-  min := red;
+  max := rgb.red;
+  min := rgb.red;
 
-  if max < green then
-    max := green;
-  if min > green then
-    min := green;
+  if max < rgb.green then
+    max := rgb.green;
+  if min > rgb.green then
+    min := rgb.green;
 
-  if max < blue then
-    max := blue;
-  if min > blue then
-    min := blue;
+  if max < rgb.blue then
+    max := rgb.blue;
+  if min > rgb.blue then
+    min := rgb.blue;
 
   c := 255 - max - min;
 
-  red := red + c;
-  green := green + c;
-  blue := blue + c;
+  rgb.red := rgb.red + c;
+  rgb.green := rgb.green + c;
+  rgb.blue := rgb.blue + c;
 end;
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -408,7 +408,7 @@ var
   Row: PRGBArray;
   AlphaRow: PbyteArray;
   vib, notvib: Integer;
-  bgi: array[0..2] of Integer;
+  bgi: TRGB;
 //  bucketpos: Integer;
   filterValue: double;
 //  filterpos: Integer;
@@ -449,12 +449,15 @@ begin
     funcval := power(fcp.gamma_threshold, gamma - 1) { / fcp.gamma_threshold; }
   else funcval := 0;
 
-  bgi[0] := round(fcp.background[0]);
-  bgi[1] := round(fcp.background[1]);
-  bgi[2] := round(fcp.background[2]);
-  bgtot.red := bgi[0];
-  bgtot.green := bgi[1];
-  bgtot.blue := bgi[2];
+  //MS
+  bgi.red := round(fcp.background[0]);
+  bgi.green := round(fcp.background[1]);
+  bgi.blue := round(fcp.background[2]);
+  if fcp.invert_luminance then
+    InvertLuminance(bgi);
+  bgtot.red := bgi.red;
+  bgtot.green := bgi.green;
+  bgtot.blue := bgi.blue;
   zero_BG.red := 0;
   zero_BG.green := 0;
   zero_BG.blue := 0;
@@ -670,12 +673,14 @@ zero_alpha:
         if (bi < 0) then bi := 0
         else if (bi > 255) then bi := 255;
 
-        //MS MUTATION
-        if fcp.invert_luminance then
-          InvertLuminance(ri, gi, bi);
         Row[j].red := ri;
         Row[j].green := gi;
         Row[j].blue := bi;
+
+        //MS MUTATION
+        if fcp.invert_luminance then
+          InvertLuminance(Row[j]);
+
         AlphaRow[j] := ai;
       end
       else begin // ------------------------------------------- No transparency
@@ -698,6 +703,8 @@ zero_alpha:
           // no intensity so simply set the BG;
           //MS XXX
           Row[j] := bgtot;
+          if fcp.invert_luminance then
+            InvertLuminance(Row[j]);
           continue;
         end;
 
@@ -716,24 +723,26 @@ zero_alpha:
         if (gi >= 0) and (gi <= 256) and (curvesSet) then gi := Round(csa[2][Round(csa[0][gi])]);
         if (bi >= 0) and (bi <= 256) and (curvesSet) then bi := Round(csa[3][Round(csa[0][bi])]);
 
-        ri := ri + (ia * bgi[0]) shr 8;
+        ri := ri + (ia * bgi.red) shr 8;
         if (ri < 0) then ri := 0
         else if (ri > 255) then ri := 255;
 
-        gi := gi + (ia * bgi[1]) shr 8;
+        gi := gi + (ia * bgi.green) shr 8;
         if (gi < 0) then gi := 0
         else if (gi > 255) then gi := 255;
 
-        bi := bi + (ia * bgi[2]) shr 8;
+        bi := bi + (ia * bgi.blue) shr 8;
         if (bi < 0) then bi := 0
         else if (bi > 255) then bi := 255;
 
-        //MS MUTATION
-        if fcp.invert_luminance then
-          InvertLuminance(ri, gi, bi);
         Row[j].red := ri;
         Row[j].green := gi;
         Row[j].blue := bi;
+
+        //MS MUTATION
+        if fcp.invert_luminance then
+          InvertLuminance(Row[j]);
+
         AlphaRow[j] := ai;//?
       end
     end;
